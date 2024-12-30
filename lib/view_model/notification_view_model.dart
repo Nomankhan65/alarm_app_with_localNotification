@@ -22,16 +22,15 @@ class NotificationViewModel extends GetxController{
   }
 
   void onDidReceiveNotificationResponse(NotificationResponse response) async {
-    showNotification();
-    if (response.actionId == 'snooze') {
-      debugPrint('Snooze button pressed');
+   if (response.actionId == 'snooze') {
+      print('Snooze button pressed');
       // Snooze logic: Reschedule the notification
-      DateTime snoozeTime = DateTime.now().add(Duration(minutes:1)); // Snooze for 5 minutes
-      await scheduleNotification(snoozeTime, 1);
+      DateTime snoozeTime = DateTime.now().add(Duration(minutes:2)); // Snooze for 5 minutes
+      await scheduleNotification(snoozeTime,response.id!);
     } else if (response.actionId == 'cancel') {
-      debugPrint('Cancel button pressed');
+      print('Cancel button pressed');
       // Cancel the notification
-      await cancelNotification(1);
+      await cancelNotification(response.id!);
     } else {
       // Default action: handle payload or navigate
       final String? payload = response.payload;
@@ -45,37 +44,18 @@ class NotificationViewModel extends GetxController{
   }
 
 
-  showNotification() async {
+
+  scheduleNotification(DateTime datetime,int id) async {
     const List<AndroidNotificationAction> actions = [
       AndroidNotificationAction(
         'snooze', // Unique ID for the action
         'Snooze', // Label shown on the button
-        showsUserInterface: true, // Show additional UI if needed
-        inputs: [], // For input collection (if needed)
       ),
       AndroidNotificationAction(
         'cancel', // Unique ID for the action
         'Cancel', // Label shown on the button
       ),
     ];
-    const AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails('your channel id', 'your channel name',
-      channelDescription: 'your channel description',
-      importance: Importance.max,
-      priority: Priority.high,
-      ticker: 'ticker',
-      actions:actions,
-
-    );
-
-    const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin!.show(
-        0, 'Alarm', 'plain body', notificationDetails,
-        payload: 'item x');
-  }
-
-  scheduleNotification(DateTime datetime,int id) async {
     int newTime= datetime.millisecondsSinceEpoch - DateTime.now().millisecondsSinceEpoch;
     print(datetime.millisecondsSinceEpoch);
     print(DateTime.now().millisecondsSinceEpoch);
@@ -95,9 +75,8 @@ class NotificationViewModel extends GetxController{
                 sound: RawResourceAndroidNotificationSound("alarm"),
                 autoCancel: false,
                 playSound: true,
-                priority: Priority.max
-
-
+                priority: Priority.max,
+              actions:actions,
             )),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:

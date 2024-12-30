@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:alarm/model/alarm_model.dart';
-import 'package:alarm/view_model/notification_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -78,7 +76,23 @@ class HomeViewViewModel extends GetxController {
       print('Error updating switch: $e');
     }
   }
+  // Updates an existing alarm in the list and saves changes
+  void updateAlarm(AlarmModel alarm, int index) {
+    try {
+      // Update the specific alarm in the list
+      alarmList[index] = alarm;
+      // Convert the updated list to JSON strings for storage
+      List<String> newList =
+      alarmList.map((e) => json.encode(e.toJson())).toList();
+      // Save the updated list to SharedPreferences
+      sharedPreferences.setStringList('alarmList', newList);
+      snackbar('Alarm updated to${alarmList[index].dateTime}');
+      // Refresh the reactive list to notify listeners
+      alarmList.refresh();
+    } catch (e) {
 
+    }
+  }
   void snackbar(
     String message,
   ) {

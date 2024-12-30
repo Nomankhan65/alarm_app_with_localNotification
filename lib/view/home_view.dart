@@ -1,4 +1,5 @@
 import 'package:alarm/view/set_alarm_view.dart';
+import 'package:alarm/view/update_view.dart';
 import 'package:alarm/view_model/home_vew_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,40 +37,47 @@ class _HomeViewState extends State<HomeView> {
               return Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                child: Container(
-                  width: double.infinity,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(data.dateTime.toString()),
-                      IconButton(
-                          onPressed: () {
-                            controller.deleteAlarm(index);
-                          },
-                          icon: Icon(
-                            CupertinoIcons.delete,
-                            color: Colors.red,
-                          )),
-                      CupertinoSwitch(
-                          value: data.milliseconds! <
-                                  DateTime.now().millisecondsSinceEpoch
-                              ? false
-                              : data.check,
-                          onChanged: (value) {
-                            controller.switchButton(index, value);
-                            data.check
-                                ? notificationController.scheduleNotification(
-                            DateTime.parse(data.dateTime!), data.id!)
-                                : notificationController
-                                    .cancelNotification(data.id!);
-                            print(data.check);
-                          }),
-                    ],
+                child: InkWell(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => UpdateAlarm(
+                              notificationId: data.id!, index: index))),
+                  child: Container(
+                    width: double.infinity,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(data.dateTime.toString()),
+                        IconButton(
+                            onPressed: () {
+                              controller.deleteAlarm(index);
+                            },
+                            icon: Icon(
+                              CupertinoIcons.delete,
+                              color: Colors.red,
+                            )),
+                        CupertinoSwitch(
+                            value: data.milliseconds! <
+                                    DateTime.now().millisecondsSinceEpoch
+                                ? false
+                                : data.check,
+                            onChanged: (value) {
+                              controller.switchButton(index, value);
+                              data.check
+                                  ? notificationController.scheduleNotification(
+                                      DateTime.parse(data.dateTime!), data.id!)
+                                  : notificationController
+                                      .cancelNotification(data.id!);
+                              print(data.check);
+                            }),
+                      ],
+                    ),
                   ),
                 ),
               );
